@@ -51,6 +51,8 @@ def sobel(gimg):
     gximg = np.zeros_like(gimg)
     gyimg = np.zeros_like(gimg)
     gmimg = np.zeros_like(gimg)
+    # gaimg = np.zeros_like(gimg,np.float64)
+    gaimg = np.zeros_like(gimg)
 
     #print(gximg.dtype)
 
@@ -61,6 +63,8 @@ def sobel(gimg):
         gyimg[gimgn-i, :] = -1
         gmimg[i, :] = -1
         gmimg[gimgn-i,:] = -1
+        gaimg[i, :] = -1
+        gaimg[gimgn - i, :] = -1
     for i in range(km+kxm):
         gximg[:,i] = -1
         gximg[:,gimgm-i] = -1
@@ -68,22 +72,25 @@ def sobel(gimg):
         gyimg[:, gimgm - i] = -1
         gmimg[:,i] = -1
         gmimg[:,gimgm-i] = -1
+        gaimg[:, i] = -1
+        gaimg[:, gimgm - i] = -1
 
     # print(gximg[0:7, 0:7])
     # print(gyimg[0:7, 0:7])
     # print(ggimg[0:7, 0:7])
+    # print(gaimg[0:7, 0:7])
 
 
     for i in range(kn+kxn, gimgn - kn-kxn+1):
         for j in range(km+kxm, gimgm - km-kxm+1):
-            gximg[i, j] = abs((kernelx * gimg[i-kxn:i+kxn+1, j-kxm:j+kxm+1]).sum()//4)
+            gximg[i, j] = (kernelx * gimg[i-kxn:i+kxn+1, j-kxm:j+kxm+1]).sum()
             #print(gimg[i-kxn:i+kxn+1, j-kxm:j+kxm+1])
             #print(i-kxn,i+kxn+1, j-kxm,j+kxm+1)
             #print(gximg[i, j])
 
     for i in range(kn+kyn, gimgn - kn-kyn+1):
         for j in range(km+kym, gimgm - km-kym+1):
-            gyimg[i, j] = abs((kernely * gimg[i-kyn:i+kyn+1, j-kym:j+kym+1]).sum()//4)
+            gyimg[i, j] = (kernely * gimg[i-kyn:i+kyn+1, j-kym:j+kym+1]).sum()
             #print(gimg[i-kyn:i+kyn+1, j-kym:j+kym+1])
             #print(i-kyn,i+kyn+1, j-kym,j+kym+1)
             #print(gyimg[i, j])
@@ -96,10 +103,45 @@ def sobel(gimg):
     # print(gyimg[156:160, 4:7])
     # print(ggimg[156:160, 4:7])
 
-    return gximg,gyimg,gmimg
+    for i in range(kn + kyn, gimgn - kn - kyn + 1):
+        for j in range(km + kym, gimgm - km - kym + 1):
+            if gximg[i,j] != 0 :
+                gaimg[i, j] = np.degrees(np.arctan((gyimg[i,j]/gximg[i,j])))
+            # elif gximg[i,j] == 0 and gyimg[i,j] > 0:
+            elif gximg[i, j] == 0:
+                gaimg[i,j] = 90
+
+    # print(gaimg[178])
+    # print(gaimg.min())
+    # print(gaimg.max())
+
+    gximg = abs(gximg//4)
+    gyimg = abs(gyimg//4)
+    gmimg = abs(gmimg//4)
+
+    return gximg,gyimg,gmimg,gaimg
 
     #print(gximg.max(),gyimg.max())
     #print(gximg.min(),gyimg.min())
+
+
+def quadrant(i):
+    pass
+
+
+def nonmaxima_supress(gmimg,gaimg):
+
+    gmimgn = gmimg.shape[0] - 1
+    gmimgm = gmimg.shape[1] - 1
+    nmsimg = np.zeros_like(gmimg)
+
+    # for i in range(kn+kyn, gmimgn - kn-kyn+1):
+    #     for j in range(km+kym, gmimgm - km-kym+1):
+    #         i = quadrant(gaimg[i,j])
+    #         if i == 0 and gmimg[]
+    #         nmsimg[i, j] =
+
+
 if __name__ == "__main__":
 
     #imgpath = input("Enter the path to the image:")
@@ -114,7 +156,10 @@ if __name__ == "__main__":
         cv2.destroyAllWindows()
     elif k == ord('s'):"""
     cv2.imwrite('gs_img.png',gimg)
-    sximg,syimg,simg = sobel(gimg)
-    cv2.imwrite('gx_img.png', sximg)
-    cv2.imwrite('gy_img.png', syimg)
-    cv2.imwrite('gm_img.png', simg)
+    gximg,gyimg,gmimg,gaimg = sobel(gimg)
+    cv2.imwrite('gx_img.png', gximg)
+    cv2.imwrite('gy_img.png', gyimg)
+    cv2.imwrite('gm_img.png', gmimg)
+    cv2.imwrite('ga_img.png', gaimg)
+
+    # nmsimg = nonmaxima_supress(gmimg,gaimg)
