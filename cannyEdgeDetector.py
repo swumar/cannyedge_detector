@@ -252,8 +252,8 @@ if __name__ == "__main__":
         # print(nmsimg[185,])
 
         # print(nmsimg.max(),nmsimg.min())
-        t1 = 14
-        t2 = 28
+        t1 = 55
+        t2 = 110
 
         dtimg = dbl_thresh(nmsimg,gaimg,t1,t2)
         cv2.imwrite('dt_img.png',dtimg)
