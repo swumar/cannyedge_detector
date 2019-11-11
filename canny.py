@@ -3,13 +3,19 @@ import os.path
 import cv2
 import numpy as np
 
+#Guassian kernel
+
 kernel = np.array([(1, 1, 2, 2, 2, 1, 1), (1, 2, 2, 4, 2, 2, 1), (2, 2, 4, 8, 4, 2, 2), (2, 4, 8, 16, 8, 4, 2), (2, 2, 4, 8, 4, 2, 2),(1, 2, 2, 4, 2, 2, 1), (1, 1, 2, 2, 2, 1, 1)])
 kn = (kernel.shape[0] - 1) // 2
 km = (kernel.shape[1] - 1) // 2
 
+#Sobel gx operator
+
 kernelx = np.array([(-1, 0, 1), (-2, 0, 2), (-1, 0, 1)])
 kxn = (kernelx.shape[0] - 1) // 2
 kxm = (kernelx.shape[1] - 1) // 2
+
+#Sobel gy operator
 
 kernely = np.array([(1, 2, 1), (0, 0, 0), (-1, -2, -1)])
 kyn = (kernely.shape[0] - 1) // 2
@@ -175,7 +181,7 @@ def dbl_thresh(nmsimg,gaimg,t1,t2):
                 for x in (-1,0,1):
                     for y in (-1,0,1):
                         if not (x == 0 and y == 0):
-                            if nmsimg[i+x,i+y] > t2 and (abs(gaimg[i+x,i+y] - gaimg[i,j]) <= 45):
+                            if (nmsimg[i+x,i+y] > t2) and (abs(gaimg[i+x,i+y] - gaimg[i,j]) <= 45):
                                 dtimg[i,j] = 255
                                 break
                             else:
