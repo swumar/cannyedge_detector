@@ -214,5 +214,6 @@ if __name__ == "__main__":
         dtimg = dbl_thresh(nmsimg,gaimg,t1,t2)                          #Function call for double tresholding
         cv2.imwrite('dt_img.bmp',dtimg)
 
+        print("All the images have been succesfully created in local storage")
 
 
